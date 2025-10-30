@@ -404,7 +404,7 @@ const routesConfig = {
         icon: 'fa-torii-gate'
     },
     special: {
-        name: '隱藏寶藏路線',
+        name: '特色體驗路線',
         spots: [11, 14, 6, 5], // 豐春冰菓店、豐盛書店、立川漁場、豐田食號
         color: '#42a5f5',
         icon: 'fa-star'
