@@ -1,3 +1,26 @@
+// 路線設定（根據14個一般景點 + 2個隱藏款）
+const routesConfig = {
+    nature: {
+        name: '自然生態路線',
+        spots: [10, 9, 12, 13, 8], // 樹湖步道、理想大地星巴克、白鮑溪、鯉魚潭、雲山水
+        specialSpots: [15, 16], // tree_special, Liyu_Lake_special
+        color: '#66bb6a',
+        icon: 'fa-leaf'
+    },
+    culture: {
+        name: '文化體驗路線',
+        spots: [1, 2, 7, 3, 4], // 壽豐火車站、豐田火車站、碧蓮寺、考古博物館、五味屋
+        color: '#ffa726',
+        icon: 'fa-torii-gate'
+    },
+    special: {
+        name: '特色體驗路線',
+        spots: [11, 14, 6, 5], // 豐春冰菓店、豐盛書店、立川漁場、豐田食號
+        color: '#42a5f5',
+        icon: 'fa-star'
+    }
+};
+
 // 壽豐景點資料庫
 const spotsData = [
     // ===== 簡單景點 (30 exp) =====
