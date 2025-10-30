@@ -69,13 +69,13 @@
                     <i class="fas fa-globe"></i> 全部
                 </button>
                 <button class="filter-tag" data-filter="nature" onclick="filterSpots('nature')">
-                    <i class="fas fa-leaf"></i> 自然探索
+                    <i class="fas fa-leaf"></i> 自然生態
                 </button>
                 <button class="filter-tag" data-filter="culture" onclick="filterSpots('culture')">
-                    <i class="fas fa-torii-gate"></i> 豐田文化
+                    <i class="fas fa-torii-gate"></i> 文化體驗
                 </button>
                 <button class="filter-tag" data-filter="special" onclick="filterSpots('special')">
-                    <i class="fas fa-star"></i> 隱藏寶藏
+                    <i class="fas fa-star"></i> 特色體驗
                 </button>
             </div>
         </div>
@@ -224,9 +224,9 @@
             // 更新頁面標題
             const routeTitles = {
                 'all': '景點地圖',
-                'nature': '自然探索路線',
-                'culture': '豐田文化路線',
-                'special': '隱藏寶藏路線'
+                'nature': '自然生態路線',
+                'culture': '文化體驗路線',
+                'special': '特色體驗路線'
             };
             document.getElementById('pageTitle').textContent = routeTitles[filter] || '景點地圖';
             
@@ -261,9 +261,9 @@
         // 取得路線標籤
         function getRouteLabel(route) {
             const labels = {
-                'nature': '自然探索',
-                'culture': '豐田文化',
-                'special': '隱藏寶藏'
+                'nature': '自然生態',
+                'culture': '文化體驗',
+                'special': '特色體驗'
             };
             return labels[route] || '景點';
         }
@@ -286,9 +286,3 @@
     </script>
 </body>
 </html>
-
-
-
-
-
-
