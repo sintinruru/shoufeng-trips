@@ -3,45 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>景點地圖 | 壽豐尋寶巴士</title>
+    <title>景點地圖 | 壽豐尋寶巴</title>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>
-        /* 閃爍動畫 */
-        @keyframes shimmer {
-            0%, 100% {
-                opacity: 1;
-                transform: scale(1);
-            }
-            50% {
-                opacity: 0.7;
-                transform: scale(1.05);
-            }
-        }
-
-        .special-spot {
-            animation: shimmer 2s ease-in-out infinite;
-        }
-
-        .special-spot .spot-list-image {
-            background: linear-gradient(135deg, #ffd700 0%, #ffed4e 50%, #ffd700 100%) !important;
-            box-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
-        }
-
-        .locked-badge {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            background: rgba(0, 0, 0, 0.7);
-            color: white;
-            padding: 4px 8px;
-            border-radius: 12px;
-            font-size: 12px;
-            display: flex;
-            align-items: center;
-            gap: 4px;
-        }
-    </style>
 </head>
 <body class="game-home">
     <!-- 導航列 -->
@@ -51,7 +15,7 @@
                 <div class="nav-brand-icon">
                     <i class="fas fa-map"></i>
                 </div>
-                <span id="pageTitle">景點地圖</span>
+                <span>景點地圖</span>
             </div>
             <div class="nav-actions">
                 <button class="nav-icon-btn" onclick="filterSpots('all')" title="全部景點">
@@ -126,47 +90,15 @@
         const collection = JSON.parse(localStorage.getItem('collection')) || [];
         let currentFilter = 'all';
 
-        // 從 URL 讀取路線參數
-        function getRouteFromURL() {
-            const urlParams = new URLSearchParams(window.location.search);
-            return urlParams.get('route') || 'all';
-        }
-
-        // 檢查隱藏款是否已解鎖
-        function isSpecialUnlocked(spot) {
-            if (!spot.isSpecial) return true; // 不是隱藏款，直接返回已解鎖
-            
-            // 檢查是否已完成解鎖條件（打卡了對應的一般景點）
-            return collection.some(c => c.id === spot.unlockRequire);
-        }
-
         // 生成景點列表
         function renderSpots(filter = 'all') {
             const spotsList = document.getElementById('spotsList');
-            
-            // 根據路線過濾景點
-            let filteredSpots = [];
-            
-            if (filter === 'all') {
-                // 顯示所有景點（包含隱藏款）
-                filteredSpots = spotsData;
-            } else if (routesConfig[filter]) {
-                // 顯示特定路線的景點
-                const routeSpots = routesConfig[filter].spots || [];
-                const specialSpots = routesConfig[filter].specialSpots || [];
-                const allRouteSpots = [...routeSpots, ...specialSpots];
-                
-                filteredSpots = spotsData.filter(spot => allRouteSpots.includes(spot.id));
-            } else {
-                // 按 route 屬性過濾
-                filteredSpots = spotsData.filter(spot => spot.route === filter);
-            }
+            const filteredSpots = filter === 'all' 
+                ? spotsData 
+                : spotsData.filter(spot => spot.route === filter);
 
             spotsList.innerHTML = filteredSpots.map(spot => {
                 const isCollected = collection.some(c => c.id === spot.id);
-                const isUnlocked = isSpecialUnlocked(spot);
-                const isSpecial = spot.isSpecial;
-                
                 const difficultyInfo = {
                     'easy': { text: '簡單', color: '#4caf50', exp: 30 },
                     'normal': { text: '普通', color: '#ff9800', exp: 50 },
@@ -174,22 +106,17 @@
                 };
                 const diff = difficultyInfo[spot.difficulty];
 
-                // 隱藏款特殊處理
-                const displayName = (isSpecial && !isUnlocked) ? spot.name : (spot.realName || spot.name);
-                const cardClass = isSpecial && isUnlocked && !isCollected ? 'special-spot' : '';
-
                 return `
-                    <div class="spot-list-card ${isCollected ? 'collected' : ''} ${cardClass}" onclick="goToSpotDetail(${spot.id})">
+                    <div class="spot-list-card ${isCollected ? 'collected' : ''}" onclick="goToSpotDetail(${spot.id})">
                         <div class="spot-list-image" style="background: linear-gradient(135deg, ${getRouteColor(spot.route)});">
-                            <i class="fas ${isSpecial ? 'fa-star' : spot.icon} fa-3x"></i>
+                            <i class="fas ${spot.icon} fa-3x"></i>
                             ${isCollected ? '<div class="collected-badge"><i class="fas fa-check-circle"></i></div>' : ''}
-                            ${isSpecial && !isUnlocked ? '<div class="locked-badge"><i class="fas fa-lock"></i> 未解鎖</div>' : ''}
                         </div>
                         <div class="spot-list-content">
                             <div class="spot-list-header">
-                                <h3 class="spot-list-title">${displayName}</h3>
+                                <h3 class="spot-list-title">${spot.name}</h3>
                                 <span class="difficulty-badge" style="background: ${diff.color}">
-                                    ${diff.text} +${spot.exp} EXP
+                                    ${diff.text} +${diff.exp} EXP
                                 </span>
                             </div>
                             <p class="spot-list-desc">${spot.shortDesc}</p>
@@ -200,9 +127,7 @@
                                 </div>
                                 ${isCollected 
                                     ? '<span class="collected-label"><i class="fas fa-check"></i> 已收集</span>'
-                                    : (isSpecial && !isUnlocked)
-                                        ? '<span class="go-checkin" style="background: #999;">🔒 需要解鎖</span>'
-                                        : '<span class="go-checkin">前往打卡 <i class="fas fa-arrow-right"></i></span>'
+                                    : '<span class="go-checkin">前往打卡 <i class="fas fa-arrow-right"></i></span>'
                                 }
                             </div>
                         </div>
@@ -221,30 +146,12 @@
             });
             document.querySelector(`[data-filter="${filter}"]`).classList.add('active');
             
-            // 更新頁面標題
-            const routeTitles = {
-                'all': '景點地圖',
-                'nature': '自然生態路線',
-                'culture': '文化體驗路線',
-                'special': '特色體驗路線'
-            };
-            document.getElementById('pageTitle').textContent = routeTitles[filter] || '景點地圖';
-            
             // 重新渲染
             renderSpots(filter);
         }
 
         // 前往景點詳情
         function goToSpotDetail(spotId) {
-            const spot = spotsData.find(s => s.id === spotId);
-            
-            // 如果是隱藏款且未解鎖，顯示提示
-            if (spot && spot.isSpecial && !isSpecialUnlocked(spot)) {
-                const requireSpot = spotsData.find(s => s.id === spot.unlockRequire);
-                alert(`🔒 此景點尚未解鎖！\n\n請先完成「${requireSpot.name}」的打卡，即可解鎖此隱藏景點。`);
-                return;
-            }
-            
             window.location.href = `spot-detail.html?id=${spotId}`;
         }
 
@@ -268,21 +175,8 @@
             return labels[route] || '景點';
         }
 
-        // 初始化 - 從 URL 讀取路線參數
-        const initialRoute = getRouteFromURL();
-        currentFilter = initialRoute;
-        
-        // 設定初始的 active 標籤
-        if (initialRoute !== 'all') {
-            document.querySelector('[data-filter="all"]').classList.remove('active');
-            const targetTag = document.querySelector(`[data-filter="${initialRoute}"]`);
-            if (targetTag) {
-                targetTag.classList.add('active');
-            }
-        }
-        
-        // 渲染景點
-        renderSpots(initialRoute);
+        // 初始化
+        renderSpots();
     </script>
 </body>
 </html>
