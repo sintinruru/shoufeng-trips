@@ -3,11 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>景點詳情 | 壽豐尋寶巴</title>
+    <title>景點詳情 | 壽豐尋寶巴士</title>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="i18n.js"></script>
 </head>
 <body class="spot-detail-page">
+    
+
     <!-- Hero 圖片區 -->
     <div class="spot-detail-hero" id="spotHero">
         <button class="spot-detail-back" onclick="history.back()">
@@ -32,7 +35,7 @@
 
             <div class="section-heading">
                 <i class="fas fa-info-circle"></i>
-                景點介紹
+                <span data-i18n="spot.introduction">景點介紹</span>
             </div>
             <p class="spot-description" id="spotDescription"></p>
         </div>
@@ -41,7 +44,7 @@
         <div class="spot-detail-card">
             <div class="section-heading">
                 <i class="fas fa-map-marked-alt"></i>
-                詳細資訊
+                <span data-i18n="spot.detailInfo">詳細資訊</span>
             </div>
             
             <div id="spotInfo">
@@ -52,7 +55,7 @@
             <div class="tips-box" id="spotTips">
                 <div class="tips-box-title">
                     <i class="fas fa-lightbulb"></i>
-                    旅遊小提示
+                    <span data-i18n="spot.travelTips">旅遊小提示</span>
                 </div>
                 <div class="tips-box-content" id="tipsContent"></div>
             </div>
@@ -62,20 +65,24 @@
     <!-- 打卡按鈕 -->
     <button class="checkin-button" id="checkinBtn" onclick="goToCheckin()">
         <i class="fas fa-qrcode"></i>
-        <span>立即打卡</span>
+        <span id="checkinBtnText">立即打卡</span>
     </button>
 
     <script src="spots-data.js"></script>
+    <script src="spots-i18n.js"></script>
     <script>
         // 從 URL 取得景點 ID
         const urlParams = new URLSearchParams(window.location.search);
         const spotId = parseInt(urlParams.get('id'));
         
-        // 取得景點資料
-        const spot = spotsData.find(s => s.id === spotId);
+        // 當前語言
+        let currentLanguage = i18n.getCurrentLanguage();
+        
+        // 取得景點資料（使用多語言版本）
+        let spot = getLocalizedSpot(spotId, currentLanguage);
         
         if (!spot) {
-            alert('找不到景點資料！');
+            alert('找不到景點資料!');
             window.location.href = 'map.html';
         }
 
@@ -90,88 +97,160 @@
             'special': '#42a5f5 0%, #1e88e5 100%'
         };
 
-        // 路線標籤
-        const routeLabels = {
-            'nature': '自然生態',
-            'culture': '文化體驗',
-            'special': '特色體驗'
-        };
-
-        // 難度資訊
-        const difficultyInfo = {
-            'easy': { text: '簡單', color: '#4caf50' },
-            'normal': { text: '普通', color: '#ff9800' },
-            'hard': { text: '困難', color: '#f44336' }
-        };
-
-        // 設定 Hero 區
-        document.getElementById('spotHero').style.background = 
-            `linear-gradient(135deg, ${routeColors[spot.route]})`;
-        document.getElementById('spotIcon').className = `fas ${spot.icon}`;
-
-        // 設定狀態
-        const statusEl = document.getElementById('spotStatus');
-        if (isCollected) {
-            statusEl.innerHTML = '<i class="fas fa-check-circle"></i><span>已收集</span>';
-            statusEl.style.background = 'rgba(255, 255, 255, 0.95)';
-            statusEl.style.color = '#4caf50';
+        // 路線標籤（多語言）
+        function getRouteLabel(route, lang) {
+            const labels = {
+                'zh-TW': {
+                    'nature': '自然生態',
+                    'culture': '文化體驗',
+                    'special': '特色體驗'
+                },
+                'en': {
+                    'nature': 'Nature',
+                    'culture': 'Culture',
+                    'special': 'Special'
+                },
+                'ja': {
+                    'nature': '自然生態',
+                    'culture': '文化体験',
+                    'special': '特色体験'
+                }
+            };
+            return labels[lang][route] || labels['zh-TW'][route];
         }
 
-        // 設定標題
-        document.getElementById('spotTitle').textContent = spot.name;
-
-        // 設定 Meta 資訊
-        const diff = difficultyInfo[spot.difficulty];
-        document.getElementById('spotMeta').innerHTML = `
-            <div class="meta-badge">
-                <i class="fas fa-route"></i>
-                ${routeLabels[spot.route]}
-            </div>
-            <div class="meta-badge" style="background: ${diff.color}; color: white;">
-                <i class="fas fa-signal"></i>
-                ${diff.text}
-            </div>
-            <div class="meta-badge" style="background: linear-gradient(135deg, var(--primary-green) 0%, var(--primary-light) 100%); color: white;">
-                <i class="fas fa-star"></i>
-                +${spot.exp} EXP
-            </div>
-        `;
-
-        // 設定描述
-        document.getElementById('spotDescription').textContent = spot.fullDescription;
-
-        // 設定詳細資訊
-        document.getElementById('spotInfo').innerHTML = `
-            <div class="info-row">
-                <div class="info-icon">
-                    <i class="fas fa-map-marker-alt"></i>
-                </div>
-                <div class="info-content">
-                    <div class="info-label">地址</div>
-                    <div class="info-text">${spot.address}</div>
-                </div>
-            </div>
-            <div class="info-row">
-                <div class="info-icon">
-                    <i class="fas fa-clock"></i>
-                </div>
-                <div class="info-content">
-                    <div class="info-label">開放時間</div>
-                    <div class="info-text">${spot.openTime}</div>
-                </div>
-            </div>
-        `;
-
-        // 設定小提示
-        document.getElementById('tipsContent').textContent = spot.tips;
-
-        // 設定打卡按鈕
-        const checkinBtn = document.getElementById('checkinBtn');
-        if (isCollected) {
-            checkinBtn.classList.add('collected');
-            checkinBtn.innerHTML = '<i class="fas fa-check"></i><span>已經收集此景點</span>';
-            checkinBtn.onclick = null;
+        // 難度資訊（多語言）
+        function getDifficultyInfo(difficulty, lang) {
+            const info = {
+                'zh-TW': {
+                    'easy': { text: '簡單', color: '#4caf50' },
+                    'normal': { text: '普通', color: '#ff9800' },
+                    'hard': { text: '困難', color: '#f44336' }
+                },
+                'en': {
+                    'easy': { text: 'Easy', color: '#4caf50' },
+                    'normal': { text: 'Normal', color: '#ff9800' },
+                    'hard': { text: 'Hard', color: '#f44336' }
+                },
+                'ja': {
+                    'easy': { text: '簡単', color: '#4caf50' },
+                    'normal': { text: '普通', color: '#ff9800' },
+                    'hard': { text: '困難', color: '#f44336' }
+                }
+            };
+            return info[lang][difficulty] || info['zh-TW'][difficulty];
         }
+
+        // 狀態文字（多語言）
+        function getStatusText(lang) {
+            const texts = {
+                'zh-TW': { collected: '已收集', notCollected: '未收集' },
+                'en': { collected: 'Collected', notCollected: 'Not Collected' },
+                'ja': { collected: '収集済み', notCollected: '未収集' }
+            };
+            return texts[lang] || texts['zh-TW'];
+        }
+
+        // 按鈕文字（多語言）
+        function getButtonText(lang) {
+            const texts = {
+                'zh-TW': { checkin: '立即打卡', collected: '已經收集此景點' },
+                'en': { checkin: 'Check In', collected: 'Already Collected' },
+                'ja': { checkin: 'チェックイン', collected: '収集済み' }
+            };
+            return texts[lang] || texts['zh-TW'];
+        }
+
+        // 渲染景點內容
+        function renderSpotDetail() {
+            // 取得當前語言的景點資料
+            spot = getLocalizedSpot(spotId, currentLanguage);
+            
+            if (!spot) return;
+
+            // 設定 Hero 區
+            document.getElementById('spotHero').style.background = 
+                `linear-gradient(135deg, ${routeColors[spot.route]})`;
+            document.getElementById('spotIcon').className = `fas ${spot.icon}`;
+
+            // 設定狀態
+            const statusEl = document.getElementById('spotStatus');
+            const statusText = getStatusText(currentLanguage);
+            if (isCollected) {
+                statusEl.innerHTML = `<i class="fas fa-check-circle"></i><span>${statusText.collected}</span>`;
+                statusEl.style.background = 'rgba(255, 255, 255, 0.95)';
+                statusEl.style.color = '#4caf50';
+            } else {
+                statusEl.innerHTML = `<i class="fas fa-lock"></i><span>${statusText.notCollected}</span>`;
+            }
+
+            // 設定標題
+            document.getElementById('spotTitle').textContent = spot.name;
+
+            // 設定 Meta 資訊
+            const diff = getDifficultyInfo(spot.difficulty, currentLanguage);
+            document.getElementById('spotMeta').innerHTML = `
+                <div class="meta-badge">
+                    <i class="fas fa-route"></i>
+                    ${getRouteLabel(spot.route, currentLanguage)}
+                </div>
+                <div class="meta-badge" style="background: ${diff.color}; color: white;">
+                    <i class="fas fa-signal"></i>
+                    ${diff.text}
+                </div>
+                <div class="meta-badge" style="background: linear-gradient(135deg, var(--primary-green) 0%, var(--primary-light) 100%); color: white;">
+                    <i class="fas fa-star"></i>
+                    +${spot.exp} EXP
+                </div>
+            `;
+
+            // 設定描述
+            document.getElementById('spotDescription').textContent = spot.fullDescription;
+
+            // 設定詳細資訊
+            const addressLabel = currentLanguage === 'en' ? 'Address' : currentLanguage === 'ja' ? '住所' : '地址';
+            const openTimeLabel = currentLanguage === 'en' ? 'Opening Hours' : currentLanguage === 'ja' ? '営業時間' : '開放時間';
+            
+            document.getElementById('spotInfo').innerHTML = `
+                <div class="info-row">
+                    <div class="info-icon">
+                        <i class="fas fa-map-marker-alt"></i>
+                    </div>
+                    <div class="info-content">
+                        <div class="info-label">${addressLabel}</div>
+                        <div class="info-text">${spot.address}</div>
+                    </div>
+                </div>
+                <div class="info-row">
+                    <div class="info-icon">
+                        <i class="fas fa-clock"></i>
+                    </div>
+                    <div class="info-content">
+                        <div class="info-label">${openTimeLabel}</div>
+                        <div class="info-text">${spot.openTime}</div>
+                    </div>
+                </div>
+            `;
+
+            // 設定小提示
+            document.getElementById('tipsContent').textContent = spot.tips;
+
+            // 設定打卡按鈕
+            const checkinBtn = document.getElementById('checkinBtn');
+            const buttonText = getButtonText(currentLanguage);
+            if (isCollected) {
+                checkinBtn.classList.add('collected');
+                checkinBtn.innerHTML = `<i class="fas fa-check"></i><span>${buttonText.collected}</span>`;
+                checkinBtn.onclick = null;
+            } else {
+                checkinBtn.classList.remove('collected');
+                checkinBtn.innerHTML = `<i class="fas fa-qrcode"></i><span>${buttonText.checkin}</span>`;
+                checkinBtn.onclick = goToCheckin;
+            }
+        }
+
+        // 初始化渲染
+        renderSpotDetail();
 
         // 前往打卡頁面
         function goToCheckin() {

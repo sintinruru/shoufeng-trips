@@ -219,8 +219,10 @@
             }
         }
     </style>
+    <script src="i18n.js"></script>
 </head>
 <body class="qr-generator-page">
+
     <!-- 導航列 -->
     <nav class="navbar">
         <div class="container">
@@ -237,7 +239,7 @@
     <!-- 頁面標題 -->
     <div class="page-header">
         <h1 class="page-title">景點 QR Code</h1>
-        <p class="page-subtitle">列印這些 QR Code 並放置在對應景點，讓遊客掃描打卡！</p>
+        <p class="page-subtitle">列印這些 QR Code 並放置在對應景點,讓遊客掃描打卡!</p>
     </div>
 
     <!-- QR Code 網格 -->
@@ -363,7 +365,8 @@
                             max-width: 300px;
                         }
                     </style>
-                </head>
+                    <script src="i18n.js"></script>
+</head>
                 <body>
                     <div class="print-card">
                         ${card.innerHTML}
@@ -386,6 +389,41 @@
 
         // 頁面載入時生成所有 QR Code
         window.addEventListener('DOMContentLoaded', generateAllQR);
-    </script>
+    
+        // 語言切換器功能
+        const languageBtn = document.getElementById('languageBtn');
+        const languageDropdown = document.getElementById('languageDropdown');
+        const currentFlag = document.getElementById('currentFlag');
+        const languageOptions = document.querySelectorAll('.language-option');
+        const languageFlags = {'zh-TW': '🇹🇼', 'en': '🇺🇸', 'ja': '🇯🇵'};
+        
+        if (languageBtn) {
+            languageBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                languageDropdown.classList.toggle('show');
+            });
+            document.addEventListener('click', () => languageDropdown.classList.remove('show'));
+        }
+        
+        languageOptions.forEach(option => {
+            option.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const lang = option.getAttribute('data-lang');
+                i18n.setLanguage(lang);
+                currentFlag.textContent = languageFlags[lang];
+                languageOptions.forEach(opt => opt.classList.remove('active'));
+                option.classList.add('active');
+                languageDropdown.classList.remove('show');
+            });
+        });
+        
+        const currentLang = i18n.getCurrentLanguage();
+        currentFlag.textContent = languageFlags[currentLang];
+        languageOptions.forEach(option => {
+            if (option.getAttribute('data-lang') === currentLang) option.classList.add('active');
+        });
+        
+        // i18n 會自動初始化，無需手動調用
+</script>
 </body>
 </html>

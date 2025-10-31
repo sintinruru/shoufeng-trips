@@ -1,24 +1,38 @@
 <!DOCTYPE html>
-<html lang="zh-TW">
+<html lang="zh-TW" data-i18n-title="character.title">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>創建角色 | 壽豐尋寶巴</title>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- 多語言系統 - 必須最先載入 -->
+    <script src="i18n.js"></script>
+    
 </head>
 <body>
+    <!-- 語言切換器 -->
+    <div class="language-switcher">
+        <button id="languageBtn">🌐 <span id="currentFlag">🇹🇼</span></button>
+        <div id="languageDropdown" class="dropdown-menu">
+            <div class="language-option" data-lang="zh-TW">🇹🇼 中文</div>
+            <div class="language-option" data-lang="en">🇺🇸 English</div>
+            <div class="language-option" data-lang="ja">🇯🇵 日本語</div>
+        </div>
+    </div>
+
     <div class="character-page">
         <div class="character-container">
             <!-- 標題 -->
             <div class="character-header">
-                <h1>創建你的角色</h1>
-                <p>選擇頭像並取個好名字吧！</p>
+                <h1 data-i18n="character.title">創建你的角色</h1>
+                <p data-i18n="character.subtitle">選擇頭像並取個好名字吧!</p>
             </div>
 
             <!-- 頭像選擇 -->
             <div class="avatar-selection">
-                <label class="section-label">選擇頭像</label>
+                <label class="section-label" data-i18n="character.selectAvatar">選擇頭像</label>
                 <div class="avatar-grid">
                     <div class="avatar-option selected" data-avatar="hiker">
                         <i class="fas fa-hiking"></i>
@@ -49,13 +63,12 @@
 
             <!-- 名稱輸入 -->
             <div class="name-input-group">
-                <label class="section-label">輸入名稱</label>
+                <label class="section-label" data-i18n="character.inputName">輸入名稱</label>
                 <input 
                     type="text" 
                     class="name-input" 
-                    placeholder="你的冒險者名稱"
-                    maxlength="12"
                     id="playerName"
+                    maxlength="12"
                 >
             </div>
 
@@ -63,17 +76,69 @@
             <div class="character-footer">
                 <a href="index.html" class="btn btn-secondary">
                     <i class="fas fa-arrow-left"></i>
-                    返回
+                    <span data-i18n="character.back">返回</span>
                 </a>
                 <button class="btn btn-primary" id="startBtn">
                     <i class="fas fa-check"></i>
-                    開始冒險
+                    <span data-i18n="character.start">開始冒險</span>
                 </button>
             </div>
         </div>
     </div>
 
     <script>
+        // 等待 DOM 和 i18n 初始化完成
+        window.addEventListener('DOMContentLoaded', () => {
+            // 更新 placeholder（因為 i18n 不會自動處理）
+            const playerNameInput = document.getElementById('playerName');
+            playerNameInput.placeholder = i18n.t('character.namePlaceholder');
+            
+            // 監聽語言變更事件
+            window.addEventListener('languageChanged', () => {
+                playerNameInput.placeholder = i18n.t('character.namePlaceholder');
+            });
+        });
+
+        // 語言切換器功能
+        const languageBtn = document.getElementById('languageBtn');
+        const languageDropdown = document.getElementById('languageDropdown');
+        const currentFlag = document.getElementById('currentFlag');
+        const languageOptions = document.querySelectorAll('.language-option');
+        const languageFlags = {'zh-TW': '🇹🇼', 'en': '🇺🇸', 'ja': '🇯🇵'};
+        
+        // 開關下拉選單
+        if (languageBtn) {
+            languageBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                languageDropdown.classList.toggle('show');
+            });
+            
+            // 點擊其他地方關閉選單
+            document.addEventListener('click', () => {
+                languageDropdown.classList.remove('show');
+            });
+        }
+        
+        // 語言切換
+        languageOptions.forEach(option => {
+            option.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const lang = option.getAttribute('data-lang');
+                i18n.setLanguage(lang);
+            });
+        });
+        
+        // 初始化當前語言顯示
+        window.addEventListener('DOMContentLoaded', () => {
+            const currentLang = i18n.getCurrentLanguage();
+            currentFlag.textContent = languageFlags[currentLang];
+            languageOptions.forEach(option => {
+                if (option.getAttribute('data-lang') === currentLang) {
+                    option.classList.add('active');
+                }
+            });
+        });
+
         // 頭像選擇邏輯
         const avatarOptions = document.querySelectorAll('.avatar-option');
         let selectedAvatar = 'hiker';
@@ -91,7 +156,7 @@
             const playerName = document.getElementById('playerName').value.trim();
             
             if (!playerName) {
-                alert('請輸入你的名稱！');
+                alert(i18n.t('character.alert'));
                 return;
             }
 

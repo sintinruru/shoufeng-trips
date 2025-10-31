@@ -6,8 +6,19 @@
     <title>景點打卡 | 壽豐尋寶巴</title>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="i18n.js"></script>
 </head>
 <body class="spot-detail-page">
+   <!-- 語言切換器 -->
+            <div class="language-switcher">
+                <button id="languageBtn">🌐 <span id="currentFlag">🇹🇼</span></button>
+                <div id="languageDropdown" class="dropdown-menu">
+                    <div class="language-option" data-lang="zh-TW">🇹🇼 中文</div>
+                    <div class="language-option" data-lang="en">🇺🇸 English</div>
+                    <div class="language-option" data-lang="ja">🇯🇵 日本語</div>
+                </div>
+            </div>
+
     <!-- 導航列 -->
     <nav class="navbar">
         <div class="container">
@@ -15,7 +26,7 @@
                 <i class="fas fa-arrow-left"></i>
             </button>
             <div class="nav-brand">
-                <span>景點打卡</span>
+                <span data-i18n="checkin.title">景點打卡</span>
             </div>
             <div style="width: 40px;"></div>
         </div>
@@ -33,7 +44,7 @@
     <!-- 打卡方式選擇 -->
     <div class="checkin-methods">
         <div class="container">
-            <h3 class="methods-title">選擇打卡方式</h3>
+            <h3 class="methods-title" data-i18n="checkin.selectMethod">選擇打卡方式</h3>
             
             <!-- QR Code 掃描 -->
             <div class="method-card">
@@ -41,12 +52,12 @@
                     <i class="fas fa-qrcode"></i>
                 </div>
                 <div class="method-content">
-                    <h4>掃描 QR Code</h4>
-                    <p>到達景點後掃描現場的 QR Code</p>
+                    <h4 data-i18n="checkin.scan">掃描 QR Code</h4>
+                    <p data-i18n="checkin.scanDesc">到達景點後掃描現場的 QR Code</p>
                 </div>
                 <button class="method-btn" onclick="startQRScan()">
                     <i class="fas fa-camera"></i>
-                    開始掃描
+                    <span data-i18n="checkin.startScan">開始掃描</span>
                 </button>
             </div>
 
@@ -56,48 +67,50 @@
                     <i class="fas fa-vial"></i>
                 </div>
                 <div class="method-content">
-                    <h4>模擬打卡</h4>
-                    <p>開發測試用，直接解鎖景點</p>
+                    <h4 data-i18n="checkin.simulate">模擬打卡</h4>
+                    <p data-i18n="checkin.simulateDesc">開發測試用,直接解鎖景點</p>
                 </div>
                 <button class="method-btn" style="background: linear-gradient(135deg, #ffa726 0%, #fb8c00 100%);" onclick="simulateCheckin()">
                     <i class="fas fa-bolt"></i>
-                    模擬打卡
+                    <span data-i18n="checkin.simulateBtn">模擬打卡</span>
                 </button>
             </div>
         </div>
     </div>
 
-    <!-- QR 掃描區（預設隱藏） -->
+    <!-- QR 掃描區(預設隱藏) -->
     <div class="qr-scanner-container" id="qrScanner" style="display: none;">
         <div class="qr-scanner-header">
             <button class="qr-close-btn" onclick="closeQRScan()">
                 <i class="fas fa-times"></i>
             </button>
-            <h3>掃描 QR Code</h3>
+            <h3 data-i18n="checkin.scan">掃描 QR Code</h3>
         </div>
         <div class="qr-reader-wrapper">
             <div id="qr-reader"></div>
         </div>
         <div class="qr-scanner-hint">
             <i class="fas fa-info-circle"></i>
-            將 QR Code 對準框內即可自動掃描
+            <span data-i18n="checkin.scanHint">將 QR Code 對準框內即可自動掃描</span>
         </div>
         <div class="qr-scanner-help">
-            <p><strong>找不到 QR Code？</strong></p>
-            <p>請確認景點是否已設置 QR Code 標示牌</p>
-            <button class="help-btn" onclick="closeQRScan()">使用模擬打卡</button>
+            <p><strong data-i18n="checkin.noQRCode">找不到 QR Code?</strong></p>
+            <p data-i18n="checkin.noQRCodeDesc">請確認景點是否已設置 QR Code 標示牌</p>
+            <button class="help-btn" onclick="closeQRScan()">
+                <span data-i18n="checkin.useSimulate">使用模擬打卡</span>
+            </button>
         </div>
     </div>
 
-    <!-- 成功動畫（預設隱藏） -->
+    <!-- 成功動畫(預設隱藏) -->
     <div class="success-modal" id="successModal" style="display: none;">
         <div class="success-content">
             <div class="success-icon">
                 <i class="fas fa-check-circle"></i>
             </div>
-            <h2 class="success-title">收集成功！</h2>
+            <h2 class="success-title" data-i18n="checkin.success">收集成功!</h2>
             <p class="success-message">
-                恭喜你收集了 <strong id="successSpotName"></strong>
+                <span data-i18n="checkin.congrats">恭喜你收集了</span> <strong id="successSpotName"></strong>
             </p>
             <div class="success-reward">
                 <div class="reward-item">
@@ -106,47 +119,59 @@
                 </div>
                 <div class="reward-item" id="levelUpReward" style="display: none;">
                     <i class="fas fa-arrow-up"></i>
-                    <span>升級到 Level <span id="newLevel">2</span>！</span>
+                    <span><span data-i18n="checkin.levelUpTo">升級到</span> Level <span id="newLevel">2</span>!</span>
                 </div>
             </div>
             <button class="success-btn" onclick="closeSuccess()">
                 <i class="fas fa-book"></i>
-                查看收藏
+                <span data-i18n="checkin.viewCollection">查看收藏</span>
             </button>
             <button class="success-btn-secondary" onclick="backToMap()">
-                繼續探索
+                <span data-i18n="checkin.continue">繼續探索</span>
             </button>
         </div>
     </div>
 
     <script src="spots-data.js"></script>
+    <script src="spots-i18n.js"></script>
     <script src="https://unpkg.com/html5-qrcode"></script>
     <script>
+        // 當前語言
+        let currentLanguage = i18n.getCurrentLanguage();
+        
         // 從 URL 取得景點 ID
         const urlParams = new URLSearchParams(window.location.search);
         const spotId = parseInt(urlParams.get('id'));
         
-        // 取得景點資料
-        const spot = spotsData.find(s => s.id === spotId);
+        // 取得景點資料（多語言版本）
+        let spot = getLocalizedSpot(spotId, currentLanguage);
         
         if (!spot) {
-            alert('找不到景點資料！');
+            alert(i18n.t('checkin.spotNotFound'));
             window.location.href = 'map.html';
         }
 
         // 檢查是否已收集
         const collection = JSON.parse(localStorage.getItem('collection')) || [];
         if (collection.some(c => c.id === spotId)) {
-            alert('你已經收集過這個景點了！');
+            alert(i18n.t('checkin.alreadyCollected'));
             window.location.href = `spot-detail.html?id=${spotId}`;
         }
 
-        // 顯示景點資訊
-        document.getElementById('checkinIcon').style.background = 
-            `linear-gradient(135deg, ${getRouteColor(spot.route)})`;
-        document.getElementById('checkinIcon').innerHTML = `<i class="fas ${spot.icon}"></i>`;
-        document.getElementById('checkinSpotName').textContent = spot.name;
-        document.getElementById('checkinSpotDesc').textContent = spot.shortDesc;
+        // 渲染景點資訊
+        function renderSpotInfo() {
+            spot = getLocalizedSpot(spotId, currentLanguage);
+            if (!spot) return;
+
+            document.getElementById('checkinIcon').style.background = 
+                `linear-gradient(135deg, ${getRouteColor(spot.route)})`;
+            document.getElementById('checkinIcon').innerHTML = `<i class="fas ${spot.icon}"></i>`;
+            document.getElementById('checkinSpotName').textContent = spot.name;
+            document.getElementById('checkinSpotDesc').textContent = spot.shortDesc;
+        }
+
+        // 初始化顯示
+        renderSpotInfo();
 
         // QR 掃描器
         let html5QrcodeScanner = null;
@@ -183,25 +208,34 @@
                 closeQRScan();
                 completeCheckin('qr');
             } else if (decodedText.startsWith('SHOUFENG_SPOT_')) {
-                // 是壽豐景點的 QR Code，但不是這個景點
+                // 是壽豐景點的 QR Code,但不是這個景點
                 const scannedId = decodedText.split('_')[2];
                 const scannedSpot = spotsData.find(s => s.id == scannedId);
-                const spotName = scannedSpot ? scannedSpot.name : '其他景點';
+                const scannedSpotLocalized = getLocalizedSpot(parseInt(scannedId), currentLanguage);
+                const spotName = scannedSpotLocalized ? scannedSpotLocalized.name : (scannedSpot ? scannedSpot.name : '其他景點');
                 
                 html5QrcodeScanner.pause();
                 
-                if (confirm(`這是「${spotName}」的 QR Code！\n\n要改為打卡「${spotName}」嗎？`)) {
+                // 多語言提示訊息
+                const messages = {
+                    'zh-TW': `這是「${spotName}」的 QR Code!\n\n要改為打卡「${spotName}」嗎?`,
+                    'en': `This is the QR Code for "${spotName}"!\n\nWould you like to check in at "${spotName}" instead?`,
+                    'ja': `これは「${spotName}」のQRコードです！\n\n「${spotName}」でチェックインしますか？`
+                };
+                const msg = messages[currentLanguage] || messages['zh-TW'];
+                
+                if (confirm(msg)) {
                     window.location.href = `checkin.html?id=${scannedId}`;
                 } else {
                     html5QrcodeScanner.resume();
                 }
             } else {
                 // 不是壽豐景點的 QR Code
-                alert('❌ 這不是壽豐尋寶巴的景點 QR Code！\n\n請掃描正確的景點 QR Code。');
+                alert(i18n.t('checkin.wrongQRCode'));
             }
         }
 
-        // 掃描錯誤（持續掃描時的正常狀態）
+        // 掃描錯誤(持續掃描時的正常狀態)
         function onScanError(error) {
             // 忽略持續的掃描錯誤訊息
             // console.log(error);
@@ -217,7 +251,15 @@
 
         // 模擬打卡
         function simulateCheckin() {
-            if (confirm(`確定要模擬打卡「${spot.name}」嗎？\n\n⚠️ 這是測試功能，實際使用時請掃描 QR Code。`)) {
+            // 多語言確認訊息
+            const messages = {
+                'zh-TW': `確定要模擬打卡「${spot.name}」嗎?\n\n⚠️ 這是測試功能,實際使用時請掃描 QR Code。`,
+                'en': `Are you sure you want to simulate check-in at "${spot.name}"?\n\n⚠️ This is a test feature, please scan QR Code for actual use.`,
+                'ja': `「${spot.name}」で模擬チェックインしてもよろしいですか？\n\n⚠️ これはテスト機能です。実際の使用時はQRコードをスキャンしてください。`
+            };
+            const msg = messages[currentLanguage] || messages['zh-TW'];
+            
+            if (confirm(msg)) {
                 completeCheckin('simulation');
             }
         }
@@ -227,7 +269,7 @@
             // 取得玩家資料
             let playerData = JSON.parse(localStorage.getItem('player'));
             if (!playerData) {
-                alert('找不到玩家資料！');
+                alert(i18n.t('checkin.noPlayerData'));
                 window.location.href = 'create-character.html';
                 return;
             }
@@ -277,7 +319,7 @@
 
             document.getElementById('successModal').style.display = 'flex';
             
-            // 播放音效（如果有）
+            // 播放音效(如果有)
             // playSuccessSound();
         }
 
@@ -300,6 +342,43 @@
             };
             return colors[route] || '#7cb342 0%, #aed581 100%';
         }
+    
+        // 語言切換器功能
+        const languageBtn = document.getElementById('languageBtn');
+        const languageDropdown = document.getElementById('languageDropdown');
+        const currentFlag = document.getElementById('currentFlag');
+        const languageOptions = document.querySelectorAll('.language-option');
+        const languageFlags = {'zh-TW': '🇹🇼', 'en': '🇺🇸', 'ja': '🇯🇵'};
+        
+        if (languageBtn) {
+            languageBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                languageDropdown.classList.toggle('show');
+            });
+            document.addEventListener('click', () => languageDropdown.classList.remove('show'));
+        }
+        
+        languageOptions.forEach(option => {
+            option.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const lang = option.getAttribute('data-lang');
+                i18n.setLanguage(lang);
+                currentLanguage = lang;
+                currentFlag.textContent = languageFlags[lang];
+                languageOptions.forEach(opt => opt.classList.remove('active'));
+                option.classList.add('active');
+                languageDropdown.classList.remove('show');
+                
+                // 🎯 重新渲染景點資訊
+                renderSpotInfo();
+            });
+        });
+        
+        const currentLang = i18n.getCurrentLanguage();
+        currentFlag.textContent = languageFlags[currentLang];
+        languageOptions.forEach(option => {
+            if (option.getAttribute('data-lang') === currentLang) option.classList.add('active');
+        });
     </script>
 </body>
 </html>

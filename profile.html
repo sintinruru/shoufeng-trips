@@ -6,6 +6,7 @@
     <title>個人資料 | 壽豐尋寶巴</title>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="i18n.js"></script>
 </head>
 <body class="collection-page">
     <!-- 頁首 -->
@@ -14,31 +15,40 @@
             <i class="fas fa-hiking" id="profileAvatarIcon"></i>
         </div>
         <h1 id="profileName">冒險者</h1>
-        <p>等級 <span id="profileLevel">1</span> 探險家</p>
+        <p><span data-i18n="game.level">等級</span> <span id="profileLevel">1</span> <span data-i18n="profile.explorer">探險家</span></p>
         <div class="collection-stats" style="margin-top: 30px;">
             <div class="stat-item">
                 <div class="stat-number" id="profileCollected">0</div>
-                <div class="stat-label">已收集</div>
+                <div class="stat-label" data-i18n="profile.collected">已收集</div>
             </div>
             <div class="stat-item">
                 <div class="stat-number" id="profileExp">0</div>
-                <div class="stat-label">經驗值</div>
+                <div class="stat-label" data-i18n="profile.exp">經驗值</div>
             </div>
             <div class="stat-item">
                 <div class="stat-number" id="profileDays">0</div>
-                <div class="stat-label">冒險天數</div>
+                <div class="stat-label" data-i18n="profile.adventureDays">冒險天數</div>
             </div>
         </div>
     </header>
 
     <!-- 內容區 -->
     <div class="collection-content">
+	 <!-- 語言切換器 -->
+    <div class="language-switcher">
+        <button id="languageBtn">🌐 <span id="currentFlag">🇹🇼</span></button>
+        <div id="languageDropdown" class="dropdown-menu">
+            <div class="language-option" data-lang="zh-TW">🇹🇼 中文</div>
+            <div class="language-option" data-lang="en">🇺🇸 English</div>
+            <div class="language-option" data-lang="ja">🇯🇵 日本語</div>
+        </div>
+    </div>
         <div style="max-width: 600px; margin: 0 auto; padding: 20px;">
             <!-- 成就區塊 -->
             <div style="background: white; border-radius: 20px; padding: 30px; margin-bottom: 20px; box-shadow: 0 4px 16px rgba(0,0,0,0.08);">
                 <h2 style="font-size: 24px; margin-bottom: 20px; display: flex; align-items: center; gap: 10px;">
                     <i class="fas fa-trophy" style="color: #ffa726;"></i>
-                    成就徽章
+                    <span data-i18n="profile.achievements">成就徽章</span>
                 </h2>
                 <div id="achievementsList" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px;">
                     <!-- 成就將由 JavaScript 生成 -->
@@ -49,7 +59,7 @@
             <div style="background: white; border-radius: 20px; padding: 30px; margin-bottom: 20px; box-shadow: 0 4px 16px rgba(0,0,0,0.08);">
                 <h2 style="font-size: 24px; margin-bottom: 20px; display: flex; align-items: center; gap: 10px;">
                     <i class="fas fa-clock" style="color: #42a5f5;"></i>
-                    最近收集
+                    <span data-i18n="profile.recentCollections">最近收集</span>
                 </h2>
                 <div id="recentCollections">
                     <!-- 最近收集將由 JavaScript 生成 -->
@@ -60,47 +70,60 @@
             <div style="display: flex; gap: 12px;">
                 <button class="btn btn-secondary" style="flex: 1;" onclick="resetProgress()">
                     <i class="fas fa-redo"></i>
-                    重置進度
+                    <span data-i18n="profile.resetProgress">重置進度</span>
                 </button>
                 <button class="btn btn-primary" style="flex: 1;" onclick="location.href='chat.html'">
                     <i class="fas fa-robot"></i>
-                    AI 助手
+                    <span data-i18n="profile.aiAssistant">AI 助手</span>
                 </button>
             </div>
         </div>
     </div>
 
     <!-- 底部導航 -->
-    <nav class="bottom-nav">
-        <div class="bottom-nav-container">
-            <a href="game-home.html" class="nav-item">
-                <div class="nav-item-icon">
-                    <i class="fas fa-home"></i>
-                </div>
-                <span class="nav-item-label">主頁</span>
-            </a>
-            <a href="map.html" class="nav-item">
-                <div class="nav-item-icon">
-                    <i class="fas fa-map"></i>
-                </div>
-                <span class="nav-item-label">地圖</span>
-            </a>
-            <a href="collection.html" class="nav-item">
-                <div class="nav-item-icon">
-                    <i class="fas fa-book"></i>
-                </div>
-                <span class="nav-item-label">收藏</span>
-            </a>
-            <a href="profile.html" class="nav-item active">
-                <div class="nav-item-icon">
-                    <i class="fas fa-user"></i>
-                </div>
-                <span class="nav-item-label">個人</span>
-            </a>
-        </div>
-    </nav>
+	<nav class="bottom-nav">
+		<div class="bottom-nav-container">
+			<a href="game-home.html" class="nav-item active">
+				<div class="nav-item-icon">
+					<i class="fas fa-home"></i>
+				</div>
+				<span class="nav-item-label" data-i18n="nav.home">主頁</span>
+			</a>
+			<a href="map.html" class="nav-item">
+				<div class="nav-item-icon">
+					<i class="fas fa-map"></i>
+				</div>
+				<span class="nav-item-label" data-i18n="nav.map">地圖</span>
+			</a>
+			<a href="collection.html" class="nav-item">
+				<div class="nav-item-icon">
+					<i class="fas fa-book"></i>
+				</div>
+				<span class="nav-item-label" data-i18n="nav.collection">收藏</span>
+			</a>
+			<a href="profile.html" class="nav-item">
+				<div class="nav-item-icon">
+					<i class="fas fa-user"></i>
+				</div>
+				<span class="nav-item-label" data-i18n="nav.profile">個人</span>
+			</a>
+			<a href="javascript:void(0)" class="nav-item" id="musicToggle" onclick="toggleMusic()" aria-pressed="false">
+				<div class="nav-item-icon">
+					<i id="musicToggleIcon" class="fas fa-volume-mute"></i>
+				</div>
+				<span class="nav-item-label" id="musicToggleLabel" data-i18n="music.turnOn">開啟音樂</span>
+			</a>
+				<!-- 背景音樂播放器（隱藏） -->
+			   <div id="bgPlayer"></div>
+			   <!-- 引用音樂控制 JS -->
+			   <script src="bg-music.js"></script>    
+		</div>
+	</nav>
 
     <script>
+        // 當前語言
+        let currentLanguage = i18n.getCurrentLanguage();
+
         // 頭像圖標對應
         const avatarIcons = {
             'hiker': 'fa-hiking',
@@ -115,13 +138,18 @@
 
         // 成就系統
         const achievements = [
-            { id: 'first-spot', name: '初探壽豐', icon: 'fa-map-marker-alt', requirement: 1 },
-            { id: 'half-way', name: '半程旅人', icon: 'fa-hiking', requirement: 4 },
-            { id: 'master', name: '探險大師', icon: 'fa-crown', requirement: 8 },
-            { id: 'nature-lover', name: '自然愛好者', icon: 'fa-leaf', requirement: 'nature-complete' },
-            { id: 'culture-explorer', name: '文化探索者', icon: 'fa-torii-gate', requirement: 'culture-complete' },
-            { id: 'special-hunter', name: '特色獵人', icon: 'fa-star', requirement: 'special-complete' }
+            { id: 'first-spot', i18nKey: 'achievement.firstSpot', icon: 'fa-map-marker-alt', requirement: 1 },
+            { id: 'half-way', i18nKey: 'achievement.halfWay', icon: 'fa-hiking', requirement: 4 },
+            { id: 'master', i18nKey: 'achievement.master', icon: 'fa-crown', requirement: 8 },
+            { id: 'nature-lover', i18nKey: 'achievement.natureLover', icon: 'fa-leaf', requirement: 'nature-complete' },
+            { id: 'culture-explorer', i18nKey: 'achievement.cultureExplorer', icon: 'fa-torii-gate', requirement: 'culture-complete' },
+            { id: 'special-hunter', i18nKey: 'achievement.specialHunter', icon: 'fa-star', requirement: 'special-complete' }
         ];
+
+        // 取得成就名稱（多語言）
+        function getAchievementName(i18nKey) {
+            return i18n.t(i18nKey);
+        }
 
         // 載入個人資料
         function loadProfile() {
@@ -159,6 +187,7 @@
         // 載入成就
         function loadAchievements(collection) {
             const achievementsList = document.getElementById('achievementsList');
+            achievementsList.innerHTML = '';
             
             achievements.forEach(achievement => {
                 let unlocked = false;
@@ -186,7 +215,7 @@
                 `;
                 badge.innerHTML = `
                     <i class="fas ${achievement.icon}" style="font-size: 32px; margin-bottom: 8px;"></i>
-                    <div style="font-size: 12px; font-weight: 600;">${achievement.name}</div>
+                    <div style="font-size: 12px; font-weight: 600;">${getAchievementName(achievement.i18nKey)}</div>
                 `;
                 achievementsList.appendChild(badge);
             });
@@ -197,19 +226,21 @@
             const recentList = document.getElementById('recentCollections');
             
             if (collection.length === 0) {
-                recentList.innerHTML = '<p style="color: #999; text-align: center;">還沒有收集任何景點</p>';
+                recentList.innerHTML = `<p style="color: #999; text-align: center;" data-i18n="profile.noCollections">還沒有收集任何景點</p>`;
+                i18n.translatePage(); // 重新翻譯
                 return;
             }
 
             const recent = collection.slice(-5).reverse();
             recentList.innerHTML = recent.map(item => {
                 const date = new Date(item.collectedAt);
+                const locale = currentLanguage === 'en' ? 'en-US' : currentLanguage === 'ja' ? 'ja-JP' : 'zh-TW';
                 return `
                     <div style="padding: 12px 0; border-bottom: 1px solid #f0f0f0; display: flex; justify-content: space-between; align-items: center;">
                         <div>
                             <div style="font-weight: 600; margin-bottom: 4px;">${item.name}</div>
                             <div style="font-size: 12px; color: #999;">
-                                ${date.toLocaleDateString('zh-TW')} ${date.toLocaleTimeString('zh-TW', {hour: '2-digit', minute:'2-digit'})}
+                                ${date.toLocaleDateString(locale)} ${date.toLocaleTimeString(locale, {hour: '2-digit', minute:'2-digit'})}
                             </div>
                         </div>
                         <i class="fas fa-check-circle" style="color: #7cb342; font-size: 20px;"></i>
@@ -220,16 +251,56 @@
 
         // 重置進度
         function resetProgress() {
-            if (confirm('確定要重置所有進度嗎？此操作無法復原！')) {
+            const confirmMsg = i18n.t('profile.resetConfirm');
+            const successMsg = i18n.t('profile.resetSuccess');
+            
+            if (confirm(confirmMsg)) {
                 localStorage.removeItem('player');
                 localStorage.removeItem('collection');
-                alert('進度已重置！');
+                alert(successMsg);
                 window.location.href = 'index.html';
             }
         }
 
         // 初始化
         loadProfile();
+    
+        // 語言切換器功能
+        const languageBtn = document.getElementById('languageBtn');
+        const languageDropdown = document.getElementById('languageDropdown');
+        const currentFlag = document.getElementById('currentFlag');
+        const languageOptions = document.querySelectorAll('.language-option');
+        const languageFlags = {'zh-TW': '🇹🇼', 'en': '🇺🇸', 'ja': '🇯🇵'};
+        
+        if (languageBtn) {
+            languageBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                languageDropdown.classList.toggle('show');
+            });
+            document.addEventListener('click', () => languageDropdown.classList.remove('show'));
+        }
+        
+        languageOptions.forEach(option => {
+            option.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const lang = option.getAttribute('data-lang');
+                i18n.setLanguage(lang);
+                currentLanguage = lang;
+                currentFlag.textContent = languageFlags[lang];
+                languageOptions.forEach(opt => opt.classList.remove('active'));
+                option.classList.add('active');
+                languageDropdown.classList.remove('show');
+                
+                // 🎯 重新載入個人資料
+                loadProfile();
+            });
+        });
+        
+        const currentLang = i18n.getCurrentLanguage();
+        currentFlag.textContent = languageFlags[currentLang];
+        languageOptions.forEach(option => {
+            if (option.getAttribute('data-lang') === currentLang) option.classList.add('active');
+        });
     </script>
 </body>
 </html>

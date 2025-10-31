@@ -3,11 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>景點地圖 | 壽豐尋寶巴</title>
+    <title>景點地圖 | 壽豐尋寶巴士</title>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="i18n.js"></script>
 </head>
 <body class="game-home">
+
     <!-- 導航列 -->
     <nav class="navbar">
         <div class="container">
@@ -15,12 +17,16 @@
                 <div class="nav-brand-icon">
                     <i class="fas fa-map"></i>
                 </div>
-                <span>景點地圖</span>
+                <span data-i18n="map.title">景點地圖</span>
             </div>
-            <div class="nav-actions">
-                <button class="nav-icon-btn" onclick="filterSpots('all')" title="全部景點">
-                    <i class="fas fa-list"></i>
-                </button>
+            <!-- 語言切換器 -->
+            <div class="language-switcher">
+                <button id="languageBtn">🌐 <span id="currentFlag">🇹🇼</span></button>
+                <div id="languageDropdown" class="dropdown-menu">
+                    <div class="language-option" data-lang="zh-TW">🇹🇼 中文</div>
+                    <div class="language-option" data-lang="en">🇺🇸 English</div>
+                    <div class="language-option" data-lang="ja">🇯🇵 日本語</div>
+                </div>
             </div>
         </div>
     </nav>
@@ -30,16 +36,16 @@
         <div class="container">
             <div style="display: flex; gap: 8px; overflow-x: auto; padding-bottom: 4px;">
                 <button class="filter-tag active" data-filter="all" onclick="filterSpots('all')">
-                    <i class="fas fa-globe"></i> 全部
+                    <i class="fas fa-globe"></i> <span data-i18n="filter.all">全部</span>
                 </button>
                 <button class="filter-tag" data-filter="nature" onclick="filterSpots('nature')">
-                    <i class="fas fa-leaf"></i> 自然生態
+                    <i class="fas fa-leaf"></i> <span data-i18n="route.nature">自然生態</span>
                 </button>
                 <button class="filter-tag" data-filter="culture" onclick="filterSpots('culture')">
-                    <i class="fas fa-torii-gate"></i> 文化體驗
+                    <i class="fas fa-torii-gate"></i> <span data-i18n="route.culture">文化體驗</span>
                 </button>
                 <button class="filter-tag" data-filter="special" onclick="filterSpots('special')">
-                    <i class="fas fa-star"></i> 特色體驗
+                    <i class="fas fa-star"></i> <span data-i18n="route.special">特色體驗</span>
                 </button>
             </div>
         </div>
@@ -54,86 +60,168 @@
         </div>
     </section>
 
-    <!-- 底部導航 -->
-    <nav class="bottom-nav">
-        <div class="bottom-nav-container">
-            <a href="game-home.html" class="nav-item">
-                <div class="nav-item-icon">
-                    <i class="fas fa-home"></i>
-                </div>
-                <span class="nav-item-label">主頁</span>
-            </a>
-            <a href="map.html" class="nav-item active">
-                <div class="nav-item-icon">
-                    <i class="fas fa-map"></i>
-                </div>
-                <span class="nav-item-label">地圖</span>
-            </a>
-            <a href="collection.html" class="nav-item">
-                <div class="nav-item-icon">
-                    <i class="fas fa-book"></i>
-                </div>
-                <span class="nav-item-label">收藏</span>
-            </a>
-            <a href="profile.html" class="nav-item">
-                <div class="nav-item-icon">
-                    <i class="fas fa-user"></i>
-                </div>
-                <span class="nav-item-label">個人</span>
-            </a>
-        </div>
-    </nav>
+   <!-- 底部導航 -->
+	<nav class="bottom-nav">
+		<div class="bottom-nav-container">
+			<a href="game-home.html" class="nav-item active">
+				<div class="nav-item-icon">
+					<i class="fas fa-home"></i>
+				</div>
+				<span class="nav-item-label" data-i18n="nav.home">主頁</span>
+			</a>
+			<a href="map.html" class="nav-item">
+				<div class="nav-item-icon">
+					<i class="fas fa-map"></i>
+				</div>
+				<span class="nav-item-label" data-i18n="nav.map">地圖</span>
+			</a>
+			<a href="collection.html" class="nav-item">
+				<div class="nav-item-icon">
+					<i class="fas fa-book"></i>
+				</div>
+				<span class="nav-item-label" data-i18n="nav.collection">收藏</span>
+			</a>
+			<a href="profile.html" class="nav-item">
+				<div class="nav-item-icon">
+					<i class="fas fa-user"></i>
+				</div>
+				<span class="nav-item-label" data-i18n="nav.profile">個人</span>
+			</a>
+			<a href="javascript:void(0)" class="nav-item" id="musicToggle" onclick="toggleMusic()" aria-pressed="false">
+				<div class="nav-item-icon">
+					<i id="musicToggleIcon" class="fas fa-volume-mute"></i>
+				</div>
+				<span class="nav-item-label" id="musicToggleLabel" data-i18n="music.turnOn">開啟音樂</span>
+			</a>
+				<!-- 背景音樂播放器（隱藏） -->
+			   <div id="bgPlayer"></div>
+			   <!-- 引用音樂控制 JS -->
+			   <script src="bg-music.js"></script>    
+		</div>
+	</nav>
 
     <script src="spots-data.js"></script>
+    <script src="spots-i18n.js"></script>
     <script>
         // 載入收藏記錄
         const collection = JSON.parse(localStorage.getItem('collection')) || [];
         let currentFilter = 'all';
+        let currentLanguage = 'zh-TW';
 
-        // 生成景點列表
+        // 生成景點列表（支援多語言）
         function renderSpots(filter = 'all') {
             const spotsList = document.getElementById('spotsList');
+            
+            // 取得當前語言
+            currentLanguage = i18n.getCurrentLanguage();
+            
+            // 取得多語言版本的景點資料
+            const localizedSpots = getAllLocalizedSpots(currentLanguage);
+            
             const filteredSpots = filter === 'all' 
-                ? spotsData 
-                : spotsData.filter(spot => spot.route === filter);
+                ? localizedSpots 
+                : localizedSpots.filter(spot => spot.route === filter);
 
             spotsList.innerHTML = filteredSpots.map(spot => {
                 const isCollected = collection.some(c => c.id === spot.id);
+                
+                // 檢查是否為隱藏景點
+                const isHidden = spot.isHidden || false;
+                let isUnlocked = false;
+                
+                // 如果是隱藏景點,檢查是否已解鎖
+                if (isHidden && spot.parentId) {
+                    isUnlocked = collection.some(c => c.id === spot.parentId);
+                }
+                
+                // 顯示名稱:未解鎖隱藏景點顯示「??? 神秘景點」
+                const displayName = (isHidden && !isUnlocked) ? spot.name : (spot.displayName || spot.name);
+                
+                // 顯示描述:未解鎖隱藏景點顯示特殊提示
+                const displayDesc = (isHidden && !isUnlocked) ? spot.shortDesc : spot.shortDesc;
+                
                 const difficultyInfo = {
-                    'easy': { text: '簡單', color: '#4caf50', exp: 30 },
-                    'normal': { text: '普通', color: '#ff9800', exp: 50 },
-                    'hard': { text: '困難', color: '#f44336', exp: 80 }
+                    'easy': { text: getDifficultyText('easy'), color: '#4caf50', exp: 30 },
+                    'normal': { text: getDifficultyText('normal'), color: '#ff9800', exp: 50 },
+                    'hard': { text: getDifficultyText('hard'), color: '#f44336', exp: 80 }
                 };
                 const diff = difficultyInfo[spot.difficulty];
 
+                // 隱藏景點使用特殊樣式
+                const hiddenClass = (isHidden && !isUnlocked) ? 'hidden-spot' : '';
+                const lockedIcon = (isHidden && !isUnlocked) ? '<i class="fas fa-lock" style="margin-left: 8px; color: #ffd700;"></i>' : '';
+
                 return `
-                    <div class="spot-list-card ${isCollected ? 'collected' : ''}" onclick="goToSpotDetail(${spot.id})">
+                    <div class="spot-list-card ${isCollected ? 'collected' : ''} ${hiddenClass}" onclick="goToSpotDetail(${spot.id}, ${isHidden}, ${isUnlocked})">
                         <div class="spot-list-image" style="background: linear-gradient(135deg, ${getRouteColor(spot.route)});">
-                            <i class="fas ${spot.icon} fa-3x"></i>
+                            <i class="fas ${(isHidden && !isUnlocked) ? 'fa-question' : spot.icon} fa-3x"></i>
                             ${isCollected ? '<div class="collected-badge"><i class="fas fa-check-circle"></i></div>' : ''}
+                            ${(isHidden && !isUnlocked) ? '<div class="hidden-badge">✨</div>' : ''}
                         </div>
                         <div class="spot-list-content">
                             <div class="spot-list-header">
-                                <h3 class="spot-list-title">${spot.name}</h3>
+                                <h3 class="spot-list-title">${displayName}${lockedIcon}</h3>
                                 <span class="difficulty-badge" style="background: ${diff.color}">
-                                    ${diff.text} +${diff.exp} EXP
+                                    ${diff.text} +${spot.exp || diff.exp} EXP
                                 </span>
                             </div>
-                            <p class="spot-list-desc">${spot.shortDesc}</p>
+                            <p class="spot-list-desc">${displayDesc}</p>
                             <div class="spot-list-footer">
                                 <div class="spot-list-info">
                                     <i class="fas fa-map-marker-alt"></i>
                                     <span>${getRouteLabel(spot.route)}</span>
                                 </div>
                                 ${isCollected 
-                                    ? '<span class="collected-label"><i class="fas fa-check"></i> 已收集</span>'
-                                    : '<span class="go-checkin">前往打卡 <i class="fas fa-arrow-right"></i></span>'
+                                    ? `<span class="collected-label"><i class="fas fa-check"></i> ${getCollectedText()}</span>`
+                                    : (isHidden && !isUnlocked) 
+                                        ? `<span class="locked-label"><i class="fas fa-lock"></i> ${getNeedUnlockText()}</span>`
+                                        : `<span class="go-checkin">${getGoCheckinText()} <i class="fas fa-arrow-right"></i></span>`
                                 }
                             </div>
                         </div>
                     </div>
                 `;
             }).join('');
+        }
+
+        // 取得難度文字（多語言）
+        function getDifficultyText(difficulty) {
+            const texts = {
+                'zh-TW': { easy: '簡單', normal: '普通', hard: '困難' },
+                'en': { easy: 'Easy', normal: 'Normal', hard: 'Hard' },
+                'ja': { easy: '簡単', normal: '普通', hard: '困難' }
+            };
+            return texts[currentLanguage][difficulty] || texts['zh-TW'][difficulty];
+        }
+
+        // 取得「已收集」文字（多語言）
+        function getCollectedText() {
+            const texts = {
+                'zh-TW': '已收集',
+                'en': 'Collected',
+                'ja': '収集済み'
+            };
+            return texts[currentLanguage] || texts['zh-TW'];
+        }
+
+        // 取得「需解鎖」文字（多語言）
+        function getNeedUnlockText() {
+            const texts = {
+                'zh-TW': '需解鎖',
+                'en': 'Locked',
+                'ja': 'ロック中'
+            };
+            return texts[currentLanguage] || texts['zh-TW'];
+        }
+
+        // 取得「前往打卡」文字（多語言）
+        function getGoCheckinText() {
+            const texts = {
+                'zh-TW': '前往打卡',
+                'en': 'Check In',
+                'ja': 'チェックイン'
+            };
+            return texts[currentLanguage] || texts['zh-TW'];
         }
 
         // 篩選功能
@@ -151,7 +239,21 @@
         }
 
         // 前往景點詳情
-        function goToSpotDetail(spotId) {
+        function goToSpotDetail(spotId, isHidden, isUnlocked) {
+            // 如果是未解鎖的隱藏景點,顯示提示訊息
+            if (isHidden && !isUnlocked) {
+                const spot = spotsData.find(s => s.id === spotId);
+                const parentSpot = spotsData.find(s => s.id === spot.parentId);
+                
+                const messages = {
+                    'zh-TW': `🔒 這是隱藏景點!\n\n需要先完成「${parentSpot.name}」的打卡才能解鎖這個神秘地點哦!`,
+                    'en': `🔒 This is a hidden spot!\n\nYou need to check in at "${parentSpot.name}" first to unlock this mysterious location!`,
+                    'ja': `🔒 これは隠しスポットです!\n\n「${parentSpot.name}」でチェックインして、この神秘的な場所をアンロックしてください!`
+                };
+                
+                alert(messages[currentLanguage] || messages['zh-TW']);
+                return;
+            }
             window.location.href = `spot-detail.html?id=${spotId}`;
         }
 
@@ -165,18 +267,80 @@
             return colors[route] || '#7cb342 0%, #aed581 100%';
         }
 
-        // 取得路線標籤
+        // 取得路線標籤（多語言）
         function getRouteLabel(route) {
             const labels = {
-                'nature': '自然生態',
-                'culture': '文化體驗',
-                'special': '特色體驗'
+                'zh-TW': {
+                    'nature': '自然生態',
+                    'culture': '文化體驗',
+                    'special': '特色體驗'
+                },
+                'en': {
+                    'nature': 'Nature',
+                    'culture': 'Culture',
+                    'special': 'Special'
+                },
+                'ja': {
+                    'nature': '自然生態',
+                    'culture': '文化体験',
+                    'special': '特色体験'
+                }
             };
-            return labels[route] || '景點';
+            return labels[currentLanguage][route] || labels['zh-TW'][route] || '景點';
+        }
+
+        // 從 URL 讀取路線參數並初始化
+        function initializeMap() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const routeParam = urlParams.get('route');
+            
+            if (routeParam && ['nature', 'culture', 'special'].includes(routeParam)) {
+                // 自動選擇對應的路線篩選器
+                filterSpots(routeParam);
+            } else {
+                // 沒有參數則顯示全部
+                renderSpots();
+            }
         }
 
         // 初始化
-        renderSpots();
+        initializeMap();
+    
+        // 語言切換器功能
+        const languageBtn = document.getElementById('languageBtn');
+        const languageDropdown = document.getElementById('languageDropdown');
+        const currentFlag = document.getElementById('currentFlag');
+        const languageOptions = document.querySelectorAll('.language-option');
+        const languageFlags = {'zh-TW': '🇹🇼', 'en': '🇺🇸', 'ja': '🇯🇵'};
+        
+        if (languageBtn) {
+            languageBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                languageDropdown.classList.toggle('show');
+            });
+            document.addEventListener('click', () => languageDropdown.classList.remove('show'));
+        }
+        
+        languageOptions.forEach(option => {
+            option.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const lang = option.getAttribute('data-lang');
+                i18n.setLanguage(lang);
+                currentFlag.textContent = languageFlags[lang];
+                languageOptions.forEach(opt => opt.classList.remove('active'));
+                option.classList.add('active');
+                languageDropdown.classList.remove('show');
+                
+                // 切換語言後重新渲染景點列表
+                renderSpots(currentFilter);
+            });
+        });
+        
+        const currentLang = i18n.getCurrentLanguage();
+        currentFlag.textContent = languageFlags[currentLang];
+        languageOptions.forEach(option => {
+            if (option.getAttribute('data-lang') === currentLang) option.classList.add('active');
+        });
     </script>
 </body>
 </html>

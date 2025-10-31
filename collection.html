@@ -6,63 +6,139 @@
     <title>我的收藏 | 壽豐尋寶巴</title>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="i18n.js"></script>
 </head>
 <body class="collection-page">
     <!-- 頁首 -->
     <header class="collection-header">
-        <h1>我的收藏</h1>
-        <p>收集所有景點，成為壽豐探險大師！</p>
+        <h1 data-i18n="collection.title">我的收藏</h1>
+        <p data-i18n="collection.subtitle">收集所有景點,成為壽豐探險大師!</p>
         <div class="collection-stats">
             <div class="stat-item">
                 <div class="stat-number" id="collectedCount">0</div>
-                <div class="stat-label">已收集</div>
+                <div class="stat-label" data-i18n="collection.collected">已收集</div>
             </div>
             <div class="stat-item">
-                <div class="stat-number">14</div>
-                <div class="stat-label">總景點</div>
+                <div class="stat-number">16</div>
+                <div class="stat-label" data-i18n="collection.total">總景點</div>
             </div>
         </div>
     </header>
 
     <!-- 景點網格 -->
     <div class="collection-content">
+	   <!-- 語言切換器 -->
+            <div class="language-switcher">
+                <button id="languageBtn">🌐 <span id="currentFlag">🇹🇼</span></button>
+                <div id="languageDropdown" class="dropdown-menu">
+                    <div class="language-option" data-lang="zh-TW">🇹🇼 中文</div>
+                    <div class="language-option" data-lang="en">🇺🇸 English</div>
+                    <div class="language-option" data-lang="ja">🇯🇵 日本語</div>
+                </div>
+            </div>
+        </div>
         <div class="collection-grid" id="collectionGrid">
             <!-- 景點卡片將由 JavaScript 動態生成 -->
         </div>
     </div>
 
-    <!-- 底部導航 -->
-    <nav class="bottom-nav">
-        <div class="bottom-nav-container">
-            <a href="game-home.html" class="nav-item">
-                <div class="nav-item-icon">
-                    <i class="fas fa-home"></i>
-                </div>
-                <span class="nav-item-label">主頁</span>
-            </a>
-            <a href="map.html" class="nav-item">
-                <div class="nav-item-icon">
-                    <i class="fas fa-map"></i>
-                </div>
-                <span class="nav-item-label">地圖</span>
-            </a>
-            <a href="collection.html" class="nav-item active">
-                <div class="nav-item-icon">
-                    <i class="fas fa-book"></i>
-                </div>
-                <span class="nav-item-label">收藏</span>
-            </a>
-            <a href="profile.html" class="nav-item">
-                <div class="nav-item-icon">
-                    <i class="fas fa-user"></i>
-                </div>
-                <span class="nav-item-label">個人</span>
-            </a>
-        </div>
-    </nav>
+		<!-- 底部導航 -->
+	<nav class="bottom-nav">
+		<div class="bottom-nav-container">
+			<a href="game-home.html" class="nav-item active">
+				<div class="nav-item-icon">
+					<i class="fas fa-home"></i>
+				</div>
+				<span class="nav-item-label" data-i18n="nav.home">主頁</span>
+			</a>
+			<a href="map.html" class="nav-item">
+				<div class="nav-item-icon">
+					<i class="fas fa-map"></i>
+				</div>
+				<span class="nav-item-label" data-i18n="nav.map">地圖</span>
+			</a>
+			<a href="collection.html" class="nav-item">
+				<div class="nav-item-icon">
+					<i class="fas fa-book"></i>
+				</div>
+				<span class="nav-item-label" data-i18n="nav.collection">收藏</span>
+			</a>
+			<a href="profile.html" class="nav-item">
+				<div class="nav-item-icon">
+					<i class="fas fa-user"></i>
+				</div>
+				<span class="nav-item-label" data-i18n="nav.profile">個人</span>
+			</a>
+			<a href="javascript:void(0)" class="nav-item" id="musicToggle" onclick="toggleMusic()" aria-pressed="false">
+				<div class="nav-item-icon">
+					<i id="musicToggleIcon" class="fas fa-volume-mute"></i>
+				</div>
+				<span class="nav-item-label" id="musicToggleLabel" data-i18n="music.turnOn">開啟音樂</span>
+			</a>
+				<!-- 背景音樂播放器（隱藏） -->
+			   <div id="bgPlayer"></div>
+			   <!-- 引用音樂控制 JS -->
+			   <script src="bg-music.js"></script>    
+		</div>
+	</nav>
 
     <script src="spots-data.js"></script>
+    <script src="spots-i18n.js"></script>
     <script>
+        // 當前語言
+        let currentLanguage = i18n.getCurrentLanguage();
+
+        // 取得路線標籤（多語言）
+        function getRouteLabel(route, lang) {
+            const labels = {
+                'zh-TW': {
+                    'nature': '自然生態',
+                    'culture': '文化體驗',
+                    'special': '特色體驗'
+                },
+                'en': {
+                    'nature': 'Nature',
+                    'culture': 'Culture',
+                    'special': 'Special'
+                },
+                'ja': {
+                    'nature': '自然生態',
+                    'culture': '文化体験',
+                    'special': '特色体験'
+                }
+            };
+            return labels[lang][route] || labels['zh-TW'][route];
+        }
+
+        // 取得狀態文字（多語言）
+        function getStatusText(isCollected, isHidden, isUnlocked, lang) {
+            const texts = {
+                'zh-TW': {
+                    collected: '✓ 已收集',
+                    locked: '🔒 未收集',
+                    hiddenLocked: '🔒 未解鎖'
+                },
+                'en': {
+                    collected: '✓ Collected',
+                    locked: '🔒 Not Collected',
+                    hiddenLocked: '🔒 Locked'
+                },
+                'ja': {
+                    collected: '✓ 収集済み',
+                    locked: '🔒 未収集',
+                    hiddenLocked: '🔒 ロック中'
+                }
+            };
+            
+            if (isCollected) {
+                return texts[lang].collected;
+            } else if (isHidden && !isUnlocked) {
+                return texts[lang].hiddenLocked;
+            } else {
+                return texts[lang].locked;
+            }
+        }
+
         // 載入收藏資料
         function loadCollection() {
             const collection = JSON.parse(localStorage.getItem('collection')) || [];
@@ -78,35 +154,69 @@
                 'special': '#42a5f5'
             };
 
-            // 路線標籤
-            const routeLabels = {
-                'nature': '自然生態',
-                'culture': '文化體驗',
-                'special': '特色體驗'
-            };
+            // 取得多語言景點資料
+            const localizedSpots = getAllLocalizedSpots(currentLanguage);
 
-            // 生成景點卡片（使用 spots-data.js 的資料）
+            // 生成景點卡片
             collectionGrid.innerHTML = '';
-            spotsData.forEach(spot => {
+            localizedSpots.forEach(spot => {
                 const isCollected = collection.some(c => c.id === spot.id);
                 
+                // 檢查隱藏景點解鎖狀態
+                const isHidden = spot.isHidden || false;
+                let isUnlocked = false;
+                
+                if (isHidden && spot.parentId) {
+                    isUnlocked = collection.some(c => c.id === spot.parentId);
+                }
+                
+                // 隱藏景點的顯示名稱
+                const displayName = (isHidden && !isUnlocked) ? spot.name : (spot.displayName || spot.name);
+                
+                // 卡片特殊樣式
+                let cardExtraClass = '';
+                if (isHidden && isCollected) {
+                    cardExtraClass = 'hidden-unlocked';
+                } else if (isHidden && !isUnlocked) {
+                    cardExtraClass = 'hidden-locked';
+                }
+                
                 const card = document.createElement('div');
-                card.className = 'spot-card';
+                card.className = `spot-card ${cardExtraClass}`;
+                
+                // 決定要顯示圖片還是圖標
+                let imageContent = '';
+                if (isCollected && spot.image) {
+                    // 已收集且有圖片 - 顯示圖片(白色背景)
+                    imageContent = `
+                        <div class="spot-image-container" style="position: relative; width: 100%; height: 240px; overflow: hidden; border-radius: 12px 12px 0 0; background: white; display: flex; align-items: center; justify-content: center;">
+                            <img src="${spot.image}" alt="${displayName}" style="max-width: 100%; max-height: 100%; object-fit: contain;">
+                            <div class="collected-badge" style="position: absolute; top: 10px; right: 10px;"><i class="fas fa-check-circle"></i></div>
+                            ${(isHidden) ? '<div class="hidden-badge" style="position: absolute; top: 10px; left: 10px;">✨</div>' : ''}
+                        </div>
+                    `;
+                } else {
+                    // 未收集或沒有圖片 - 顯示圖標
+                    imageContent = `
+                        <div class="spot-image ${isCollected ? '' : 'locked'}" style="background: linear-gradient(135deg, ${routeColors[spot.route]}, ${routeColors[spot.route]}dd);">
+                            <i class="fas ${(isHidden && !isUnlocked) ? 'fa-question' : spot.icon} fa-3x"></i>
+                            ${!isCollected ? '<div class="lock-overlay"><i class="fas fa-lock"></i></div>' : ''}
+                            ${isCollected ? '<div class="collected-badge"><i class="fas fa-check-circle"></i></div>' : ''}
+                        </div>
+                    `;
+                }
+                
                 card.innerHTML = `
-                    <div class="spot-image ${isCollected ? '' : 'locked'}" style="background: linear-gradient(135deg, ${routeColors[spot.route]}, ${routeColors[spot.route]}dd);">
-                        <i class="fas ${spot.icon} fa-3x"></i>
-                        ${!isCollected ? '<div class="lock-overlay"><i class="fas fa-lock"></i></div>' : ''}
-                        ${isCollected ? '<div class="collected-badge"><i class="fas fa-check-circle"></i></div>' : ''}
-                    </div>
+                    ${imageContent}
                     <div class="spot-info">
-                        <h3 class="spot-name">${spot.name}</h3>
+                        <h3 class="spot-name">${displayName}</h3>
                         <p class="spot-description">${spot.shortDesc}</p>
                         <div class="spot-meta">
                             <span class="route-tag" style="background: ${routeColors[spot.route]}20; color: ${routeColors[spot.route]};">
-                                ${routeLabels[spot.route]}
+                                ${getRouteLabel(spot.route, currentLanguage)}
                             </span>
                             <span class="spot-status ${isCollected ? 'collected' : 'locked'}">
-                                ${isCollected ? '✓ 已收集' : '🔒 未收集'}
+                                ${getStatusText(isCollected, isHidden, isUnlocked, currentLanguage)}
                             </span>
                         </div>
                     </div>
@@ -114,15 +224,63 @@
                 
                 // 點擊卡片跳轉到詳情頁
                 card.onclick = () => {
+                    if (isHidden && !isUnlocked) {
+                        const parentSpot = spotsData.find(s => s.id === spot.parentId);
+                        const messages = {
+                            'zh-TW': `🔒 這是隱藏景點!\n\n需要先完成「${parentSpot.name}」的打卡才能解鎖哦!`,
+                            'en': `🔒 This is a hidden spot!\n\nYou need to check in at "${parentSpot.name}" first to unlock it!`,
+                            'ja': `🔒 これは隠しスポットです!\n\n「${parentSpot.name}」でチェックインして、アンロックしてください!`
+                        };
+                        alert(messages[currentLanguage] || messages['zh-TW']);
+                        return;
+                    }
                     window.location.href = `spot-detail.html?id=${spot.id}`;
                 };
                 
-collectionGrid.appendChild(card);
+                collectionGrid.appendChild(card);
             });
         }
 
         // 初始化
         loadCollection();
+    
+        // 語言切換器功能
+        const languageBtn = document.getElementById('languageBtn');
+        const languageDropdown = document.getElementById('languageDropdown');
+        const currentFlag = document.getElementById('currentFlag');
+        const languageOptions = document.querySelectorAll('.language-option');
+        const languageFlags = {'zh-TW': '🇹🇼', 'en': '🇺🇸', 'ja': '🇯🇵'};
+        
+        if (languageBtn) {
+            languageBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                languageDropdown.classList.toggle('show');
+            });
+            document.addEventListener('click', () => languageDropdown.classList.remove('show'));
+        }
+        
+        languageOptions.forEach(option => {
+            option.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const lang = option.getAttribute('data-lang');
+                i18n.setLanguage(lang);
+                currentLanguage = lang;
+                currentFlag.textContent = languageFlags[lang];
+                languageOptions.forEach(opt => opt.classList.remove('active'));
+                option.classList.add('active');
+                languageDropdown.classList.remove('show');
+                
+                // 🎯 重新載入收藏列表
+                loadCollection();
+            });
+        });
+        
+        const currentLang = i18n.getCurrentLanguage();
+        currentFlag.textContent = languageFlags[currentLang];
+        languageOptions.forEach(option => {
+            if (option.getAttribute('data-lang') === currentLang) option.classList.add('active');
+        });
     </script>
+	
 </body>
 </html>

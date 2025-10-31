@@ -3,11 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>遊戲主頁 | 壽豐尋寶巴士</title>
+    <title>遊戲主頁 | 壽豐尋寶巴</title>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="i18n.js"></script>
 </head>
 <body class="game-home">
+   
     <!-- 導航列 -->
     <nav class="navbar">
         <div class="container">
@@ -15,13 +17,17 @@
                 <div class="nav-brand-icon">
                     <i class="fas fa-map-marked-alt"></i>
                 </div>
-                <span>壽豐尋寶巴士</span>
+                <span data-i18n="app.title">壽豐尋寶巴</span>
             </div>
-            <div class="nav-actions">
-                <button class="nav-icon-btn" onclick="location.href='chat.html'" title="AI 助手">
-                    <i class="fas fa-robot"></i>
-                </button>
-            </div>
+             <!-- 語言切換器 -->
+    <div class="language-switcher">
+        <button id="languageBtn">🌐 <span id="currentFlag">🇹🇼</span></button>
+        <div id="languageDropdown" class="dropdown-menu">
+            <div class="language-option" data-lang="zh-TW">🇹🇼 中文</div>
+            <div class="language-option" data-lang="en">🇺🇸 English</div>
+            <div class="language-option" data-lang="ja">🇯🇵 日本語</div>
+        </div>
+    </div>
         </div>
     </nav>
 
@@ -31,10 +37,10 @@
             <i class="fas fa-hiking" id="playerAvatarIcon"></i>
         </div>
         <div class="player-details">
-            <div class="player-name" id="playerName">冒險者</div>
+            <div class="player-name" id="playerName"><span data-i18n="game.adventurer">冒險者</span></div>
             <div class="player-level">
-                等級 <span id="playerLevel">1</span> | 
-                經驗值 <span id="playerExp">0</span> / <span id="playerMaxExp">100</span>
+                <span data-i18n="game.level">等級</span> <span id="playerLevel">1</span> | 
+                <span data-i18n="game.exp">經驗值</span> <span id="playerExp">0</span> / <span id="playerMaxExp">100</span>
             </div>
             <div class="exp-bar">
                 <div class="exp-fill" id="expFill" style="width: 0%"></div>
@@ -45,8 +51,8 @@
     <!-- 路線選擇區 -->
     <section class="routes-section">
         <div class="section-header">
-            <h2 class="section-title">選擇你的冒險路線</h2>
-            <p class="section-description">探索壽豐的自然、文化與特色景點</p>
+            <h2 class="section-title" data-i18n="game.selectRoute">選擇你的冒險路線</h2>
+            <p class="section-description" data-i18n="game.routeDesc">探索壽豐的自然、文化與特色景點</p>
         </div>
 
         <div class="routes-grid">
@@ -54,12 +60,12 @@
             <div class="route-card" onclick="selectRoute('nature')">
                 <div class="route-image" style="background: linear-gradient(135deg, #66bb6a 0%, #43a047 100%);">
                     <i class="fas fa-mountain"></i>
-                    <div class="route-badge">自然生態</div>
+                    <div class="route-badge" data-i18n="route.nature">自然生態</div>
                 </div>
                 <div class="route-content">
-                    <h3 class="route-title">自然生態之旅</h3>
+                    <h3 class="route-title" data-i18n="route.nature.title">自然生態之旅</h3>
                     <p class="route-description">
-                        探索鯉魚潭、雲山水、白鮑溪等自然美景
+                        <span data-i18n="route.nature.desc">探索鯉魚潭、雲山水、白鮑溪等自然美景</span>
                     </p>
                     <div class="route-progress">
                         <div class="progress-bar">
@@ -69,7 +75,7 @@
                     </div>
                     <div class="route-spots-count">
                         <i class="fas fa-map-pin"></i>
-                        <span>5個景點：樹湖瀑布、雲山水、白鮑溪等</span>
+                        <span data-i18n="route.nature.spots">5個景點:樹湖瀑布、雲山水、白鮑溪等</span>
                     </div>
                 </div>
             </div>
@@ -78,12 +84,12 @@
             <div class="route-card" onclick="selectRoute('culture')">
                 <div class="route-image" style="background: linear-gradient(135deg, #ffa726 0%, #fb8c00 100%);">
                     <i class="fas fa-torii-gate"></i>
-                    <div class="route-badge">文化體驗</div>
+                    <div class="route-badge" data-i18n="route.culture">文化體驗</div>
                 </div>
                 <div class="route-content">
-                    <h3 class="route-title">文化體驗之旅</h3>
+                    <h3 class="route-title" data-i18n="route.culture.title">文化體驗之旅</h3>
                     <p class="route-description">
-                        品味考古博物館、日式神社改建寺廟等文化底蘊
+                        <span data-i18n="route.culture.desc">品味考古博物館、日式神社改建寺廟等文化底蘊</span>
                     </p>
                     <div class="route-progress">
                         <div class="progress-bar">
@@ -93,7 +99,7 @@
                     </div>
                     <div class="route-spots-count">
                         <i class="fas fa-map-pin"></i>
-                        <span>5個景點：壽豐火車站、豐田火車站等</span>
+                        <span data-i18n="route.culture.spots">5個景點:壽豐火車站、豐田火車站等</span>
                     </div>
                 </div>
             </div>
@@ -102,12 +108,12 @@
             <div class="route-card" onclick="selectRoute('special')">
                 <div class="route-image" style="background: linear-gradient(135deg, #42a5f5 0%, #1e88e5 100%);">
                     <i class="fas fa-fish"></i>
-                    <div class="route-badge">特色體驗</div>
+                    <div class="route-badge" data-i18n="route.special">特色體驗</div>
                 </div>
                 <div class="route-content">
-                    <h3 class="route-title">特色體驗之旅</h3>
+                    <h3 class="route-title" data-i18n="route.special.title">特色體驗之旅</h3>
                     <p class="route-description">
-                        享受在地美食、手作體驗與獨特活動
+                        <span data-i18n="route.special.desc">享受在地美食、手作體驗與稀特活動</span>
                     </p>
                     <div class="route-progress">
                         <div class="progress-bar">
@@ -117,44 +123,53 @@
                     </div>
                     <div class="route-spots-count">
                         <i class="fas fa-map-pin"></i>
-                        <span>4個景點：豐春冰菓店、豐盛書店、立川漁場等</span>
+                        <span data-i18n="route.special.spots">4個景點:豐春冰菓店、豐盛書店、立川漁場等</span>
                     </div>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- 底部導航 -->
-    <nav class="bottom-nav">
-        <div class="bottom-nav-container">
-            <a href="game-home.html" class="nav-item active">
-                <div class="nav-item-icon">
-                    <i class="fas fa-home"></i>
-                </div>
-                <span class="nav-item-label">主頁</span>
-            </a>
-            <a href="map.html" class="nav-item">
-                <div class="nav-item-icon">
-                    <i class="fas fa-map"></i>
-                </div>
-                <span class="nav-item-label">地圖</span>
-            </a>
-            <a href="collection.html" class="nav-item">
-                <div class="nav-item-icon">
-                    <i class="fas fa-book"></i>
-                </div>
-                <span class="nav-item-label">收藏</span>
-            </a>
-            <a href="profile.html" class="nav-item">
-                <div class="nav-item-icon">
-                    <i class="fas fa-user"></i>
-                </div>
-                <span class="nav-item-label">個人</span>
-            </a>
-        </div>
-    </nav>
+   <!-- 底部導航 -->
+	<nav class="bottom-nav">
+		<div class="bottom-nav-container">
+			<a href="game-home.html" class="nav-item active">
+				<div class="nav-item-icon">
+					<i class="fas fa-home"></i>
+				</div>
+				<span class="nav-item-label" data-i18n="nav.home">主頁</span>
+			</a>
+			<a href="map.html" class="nav-item">
+				<div class="nav-item-icon">
+					<i class="fas fa-map"></i>
+				</div>
+				<span class="nav-item-label" data-i18n="nav.map">地圖</span>
+			</a>
+			<a href="collection.html" class="nav-item">
+				<div class="nav-item-icon">
+					<i class="fas fa-book"></i>
+				</div>
+				<span class="nav-item-label" data-i18n="nav.collection">收藏</span>
+			</a>
+			<a href="profile.html" class="nav-item">
+				<div class="nav-item-icon">
+					<i class="fas fa-user"></i>
+				</div>
+				<span class="nav-item-label" data-i18n="nav.profile">個人</span>
+			</a>
+			<a href="javascript:void(0)" class="nav-item" id="musicToggle" onclick="toggleMusic()" aria-pressed="false">
+				<div class="nav-item-icon">
+					<i id="musicToggleIcon" class="fas fa-volume-mute"></i>
+				</div>
+				<span class="nav-item-label" id="musicToggleLabel" data-i18n="music.turnOn">開啟音樂</span>
+			</a>
+				<!-- 背景音樂播放器（隱藏） -->
+			   <div id="bgPlayer"></div>
+			   <!-- 引用音樂控制 JS -->
+			   <script src="bg-music.js"></script>    
+		</div>
+	</nav>
 
-    <script src="spots-data.js"></script>
     <script>
         // 頭像圖標對應
         const avatarIcons = {
@@ -197,11 +212,11 @@
         function loadRouteProgress() {
             const collection = JSON.parse(localStorage.getItem('collection')) || [];
             
-            // 定義每條路線包含的景點 ID（對應新的景點配置）
+            // 定義每條路線包含的景點 ID(對應14個新景點)
             const routes = {
-                nature: [10, 9, 12, 13, 8],    // 樹湖步道、理想大地星巴克、白鮑溪、鯉魚潭、雲山水
-                culture: [1, 2, 7, 3, 4],      // 壽豐火車站、豐田火車站、碧蓮寺、考古博物館、五味屋
-                special: [11, 14, 6, 5]        // 豐春冰菓店、豐盛書店、立川漁場、豐田食號
+                nature: [5, 10, 12, 13, 14],  // 樹湖瀑布、東谷、白鮑溪、鯉魚潭、雲山水
+                culture: [1, 2, 7, 8, 9],     // 壽豐站、豐田站、碧蓮寺、豐裡國小、文史館
+                special: [3, 4, 6, 11]        // 豐春冰菓店、五味屋、立川漁場、碧玉工坊
             };
 
             // 計算各路線進度
@@ -217,14 +232,57 @@
             });
         }
 
-        // 選擇路線 - 直接跳轉到地圖並帶上路線參數
+        // 選擇路線
         function selectRoute(routeType) {
+            // 直接導航到地圖頁面並傳遞路線參數
             window.location.href = 'map.html?route=' + routeType;
         }
 
         // 初始化
         loadPlayerData();
         loadRouteProgress();
+
+        // === 語言切換器功能 ===
+        const languageBtn = document.getElementById('languageBtn');
+        const languageDropdown = document.getElementById('languageDropdown');
+        const currentFlag = document.getElementById('currentFlag');
+        const languageOptions = document.querySelectorAll('.language-option');
+        
+        const languageFlags = {'zh-TW': '🇹🇼', 'en': '🇺🇸', 'ja': '🇯🇵'};
+        
+        if (languageBtn) {
+            languageBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                languageDropdown.classList.toggle('show');
+            });
+        }
+        
+        document.addEventListener('click', () => {
+            languageDropdown.classList.remove('show');
+        });
+        
+        languageOptions.forEach(option => {
+            option.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const lang = option.getAttribute('data-lang');
+                i18n.setLanguage(lang);
+                currentFlag.textContent = languageFlags[lang];
+                languageOptions.forEach(opt => opt.classList.remove('active'));
+                option.classList.add('active');
+                languageDropdown.classList.remove('show');
+            });
+        });
+        
+        const currentLang = i18n.getCurrentLanguage();
+        currentFlag.textContent = languageFlags[currentLang];
+        languageOptions.forEach(option => {
+            if (option.getAttribute('data-lang') === currentLang) {
+                option.classList.add('active');
+            }
+        });
+        
+        // 初始化多語言系統
+        // i18n 會自動初始化，無需手動調用
     </script>
 </body>
 </html>
