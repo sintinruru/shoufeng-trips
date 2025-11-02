@@ -1,5 +1,5 @@
 // ⚠️ 重要：請將下面的 YOUR_GROQ_API_KEY 替換成你的真實 Groq API Key
-const API_KEY = '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';
+const API_KEY = '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';
 const API_URL = 'https://api.groq.com/openai/v1/chat/completions';
 
 // 壽豐景點資料庫（14個景點）
